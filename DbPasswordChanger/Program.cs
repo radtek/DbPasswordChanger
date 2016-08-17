@@ -50,6 +50,7 @@ namespace DatabasePasswordChanger
 
 					using (MySqlConnection conn1 = new MySqlConnection(connectString))
 					{
+						conn1.Open();
 						Regex portRegex = new Regex("Port=[0-9]+");
 						var match = portRegex.Match(targetConnectString);
 						string newConnectString =
