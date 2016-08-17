@@ -8,7 +8,6 @@ using NLog;
 using NLog.Config;
 #if NET_CORE
 using System.Text;
-using Microsoft.Extensions.Configuration;
 #endif
 
 namespace DatabasePasswordChanger
@@ -38,16 +37,16 @@ namespace DatabasePasswordChanger
 				{
 					_logger.Info("STEP 2: Add new mysql account.");
 
-					string date = DateTime.Now.ToString("yyyyMMddHHmmss");
+					string date = DateTime.Now.ToString("MMddHHmm");
 					string password = Guid.NewGuid().ToString("N");
-					string user = $"autouser{date}";
-					conn.Execute($"CREATE USER IF NOT EXISTS {user}@'%' IDENTIFIED BY '{password}';");
+					string user = $"autousr{date}";
+					conn.Execute($"CREATE USER '{user}'@'%' IDENTIFIED BY '{password}';");
 					conn.Execute($"GRANT ALL ON *.* TO '{user}'@'%';");
 					conn.Execute("FLUSH PRIVILEGES;");
 
 					_logger.Info("STEP 3: Delete old mysql account.");
 
-					conn.Execute($"DELETE FROM mysql.user where User like 'autouser%' and User!='{user}';");
+					conn.Execute($"DELETE FROM mysql.user where User like 'autousr%' and User!='{user}';");
 
 					using (MySqlConnection conn1 = new MySqlConnection(connectString))
 					{
